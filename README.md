@@ -1,107 +1,50 @@
-# GitHub-Repository-Random-Fetcher
-is a Google Apps Script project that fetches multiple random public repositories from GitHub and displays their details in a Google Sheet
+# ✨VantageAim✨ - Precision and Control in Valorant! 🎯
 
+VantageAim is a customizable macro designed to enhance your aiming consistency and recoil control in Valorant. 🔥 It's built to provide subtle assistance, helping you stay on target and improve your in-game performance. 💎 USE RESPONSIBLY and AT YOUR OWN RISK.
 
-## Overview
+![Macro Logo](assets/VantageAimLogo.png)  <!-- Add your logo here. Remove this line if you don't want a logo. -->
 
-The **GitHub Repository Fetcher** is a Google Apps Script project that fetches multiple random public repositories from GitHub and displays their details in a Google Sheet. This project showcases my API integration, data handling, and visualization skills, making it a valuable addition to my portfolio as a backend developer and data scientist.
+## ✨ Features
 
-## Features
+🌟 Key Features to Enhance Your Valorant Experience: 🌟
 
-- **Fetch Multiple Repositories**: Retrieve a specified number of random public repositories from GitHub.
-- **Repository Details**: Gather and display information such as:
-  - Repository Name
-  - Stars
-  - Forks
-  - Number of Commits
-  - Number of Open Issues
-- **Dynamic Search Criteria**: Easily modify the search query to fetch repositories based on programming language or other parameters.
-- **Data Visualization**: Integrate with Google Looker Studio to visualize repository data through charts and dashboards.
+*   🎯 Recoil Control Assistance: Fine-tuned macros to help you manage weapon recoil and maintain accurate fire. 🔫
+*   ⚙️ Customizable Profiles: Create and save unique macro profiles for different weapons and agents. 🛡️
+*   🖱️ Easy Toggle:  Quickly enable/disable the macro with a customizable hotkey. ⌨️
+*   📊 Performance Monitoring:  Monitor your in-game accuracy and see the impact of VantageAim. 📈
+*   🛡️ Low Profile Design:  Designed to minimize resource usage and avoid detection (see important disclaimer below!). 🕵️
+*   🚀 Simple Setup: Easy-to-use configuration interface allows you to customize settings and get started quickly. 💨
+*   📜 Open Source (with limitations): Parts of the code are open source for transparency and community contributions (see details below!). 👀
+*   🔄 Continuous Improvement: Dedicated team constantly working on improving accuracy and compatibility. 🚀
 
-## Skills Highlighted
+## ⬇️ Installation
 
-- **API Integration**: Proficient in using RESTful APIs to fetch and manipulate data.
-- **Google Apps Script**: Experience in automating tasks and enhancing Google Sheets functionality.
-- **Data Management**: Ability to parse and handle JSON data effectively for reporting and analysis.
-- **Data Visualization**: Capable of creating compelling visual representations of data using Google Looker Studio.
-- **Error Handling**: Implemented error logging to ensure robustness and facilitate debugging during API interactions.
+⚙️ Get Started with VantageAim in a Few Simple Steps: ⚙️
 
-## Usage
+1.  Download the latest release from "releases/VantageAim.zip" ⬇️
+2.  Extract the archive to your desired location. 📁
+3.  Run the VantageAim.exe application. 💻
+4.  Configure your settings in the user interface. 🖱️
 
-### Setup Instructions
+## ⚙️ Configuration
 
-1. **Open Google Sheets**: Create a new Google Sheet.
-2. **Access Apps Script**:
-   - Click on `Extensions` > `Apps Script`.
-3. **Copy and Paste Code**:
-   - Copy the following code into the Apps Script editor:
+🔧 Configuration Parameters (within the application UI): 🔧
 
-   ```javascript
-   function getMultipleRandomGitHubReposData(numRepos) {
-     const searchUrl = 'https://api.github.com/search/repositories?q=language:javascript&sort=stars&order=desc';
+*   Weapon Profile: Select the weapon you want to configure the macro for (e.g., Vandal, Phantom).
+*   Sensitivity: Adjust the macro sensitivity to match your in-game settings.
+*   Hotkey: Choose a key to toggle the macro on/off.
+*   Recoil Pattern: Select from different recoil pattern options (if available).
 
-     try {
-       const response = UrlFetchApp.fetch(searchUrl);
-       const data = JSON.parse(response.getContentText());
+---
 
-       if (data.items && data.items.length > 0) {
-         numRepos = Math.min(numRepos, data.items.length);
-         const allRepoData = [];
+⚠️ EXTREMELY IMPORTANT DISCLAIMER: ⚠️
 
-         for (let i = 0; i < numRepos; i++) {
-           const randomIndex = Math.floor(Math.random() * data.items.length);
-           const randomRepo = data.items[randomIndex];
-           const repoName = randomRepo.full_name;
-           const apiBaseUrl = `https://api.github.com/repos/${repoName}`;
+*   USE AT YOUR OWN RISK: The use of any third-party software in Valorant is potentially against Riot Games' Terms of Service. *Using VantageAim could result in a ban from the game.* We are not responsible for any bans or other penalties you may incur.
+*   INTENDED FOR PRACTICE AND SKILL DEVELOPMENT: This macro is intended to be used as a training tool to learn recoil patterns and improve aim control.
+*   NO GUARANTEE OF DETECTION AVOIDANCE: We cannot guarantee that VantageAim will be undetectable. Riot Games constantly updates its anti-cheat measures.
+*   ETHICAL USE IS MANDATORY: Do not use this macro in competitive environments or in a way that gives you an unfair advantage over other players.
+*   LIMITED OPEN SOURCE: Only portions of the code related to UI and configuration are open source. The core macro functionality is not publicly available to prevent reverse engineering and potential misuse.
 
-           const repoResponse = UrlFetchApp.fetch(apiBaseUrl);
-           const repoData = JSON.parse(repoResponse.getContentText());
+---
 
-           const commitsResponse = UrlFetchApp.fetch(`${apiBaseUrl}/commits`);
-           const commitsData = JSON.parse(commitsResponse.getContentText());
-
-           const issuesResponse = UrlFetchApp.fetch(`${apiBaseUrl}/issues`);
-           const issuesData = JSON.parse(issuesResponse.getContentText());
-
-           allRepoData.push([
-             repoData.name,
-             repoData.stargazers_count,
-             repoData.forks_count,
-             commitsData.length,
-             issuesData.filter(issue => issue.state === 'open').length
-           ]);
-         }
-
-         let sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-         sheet.clear();
-         sheet.appendRow(["Repo Name", "Stars", "Forks", "Commits Count", "Open Issues Count"]);
-         allRepoData.forEach(repoRow => {
-           sheet.appendRow(repoRow);
-         });
-
-         Logger.log(numRepos + ' random repositories added to the sheet.');
-       } else {
-         Logger.log('No repositories found.');
-       }
-     } catch (error) {
-       Logger.log('Error fetching data: ' + error);
-     }
-   }
-
-   function fetchAndFillRandomRepos() {
-     getMultipleRandomGitHubReposData(5); // Adjust the number of repositories as needed
-   }
-   ```
-
-4. **Run the Function**:
-   - Execute the `fetchAndFillRandomRepos()` function to populate the Google Sheet with data from random repositories.
-
-### Integration with Looker Studio
-
-- Link the Google Sheet as a data source in Google Looker Studio to create visualizations based on the fetched repository data. This can include charts displaying stars, forks, and activity trends.
-
-## Conclusion
-
-This project showcases my ability to work with APIs and handle data efficiently. It reflects my skills in backend development, data analysis, and visualization. By integrating multiple GitHub APIs and utilizing Google Apps Script, I’ve created a versatile tool for tracking and analyzing GitHub repositories.
-
-Feel free to reach out for collaborations or inquiries regarding this project!
+*Inspired by the desire to improve gaming skills and provide a tool for learning. Use responsibly and ethically!*
